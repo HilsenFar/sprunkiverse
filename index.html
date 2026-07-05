@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>JASON'S SPRUNKIVERSE — 3D</title>
+<link rel="stylesheet" href="css/style.css" />
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+  }
+}
+</script>
+</head>
+<body>
+
+<canvas id="stage"></canvas>
+
+<!-- ============ LOADING / TITLE ============ -->
+<div id="overlay">
+  <div class="title-wrap">
+    <h1 class="logo"><em>JASON'S</em>SPRUNKI<span>VERSE</span></h1>
+    <p class="tagline">OPEN WORLD &middot; GOD SIM &middot; AQUARIUM &middot; MUSIC MIXER</p>
+    <div id="loading-block">
+      <div class="loadbar"><div id="loadbar-fill"></div></div>
+      <p id="load-status">warming up the stage…</p>
+    </div>
+    <button id="enter-btn" class="hidden">CLICK TO ENTER</button>
+    <p class="credit">fan-made homage to Incredibox / Sprunki &middot; original Sprunki characters by NyankoBfLol (Scratch, CC BY-SA 2.0) &middot; music synthesized in-browser</p>
+  </div>
+</div>
+
+<!-- ============ MAIN MENU ============ -->
+<div id="menu" class="hidden">
+  <h1 class="menu-logo"><em>JASON'S</em> SPRUNKIVERSE</h1>
+  <p class="menu-sub">CHOOSE YOUR REALITY</p>
+  <div id="menu-cards">
+    <div class="mode-card" data-mode="world">
+      <div class="mc-icon">🌍</div>
+      <h2>SPRUNKI WORLD</h2>
+      <p>Live as JASON the Sprunki. Explore, meet the villagers, run missions, win music battles.</p>
+      <span class="mc-go">PLAY ▸</span>
+    </div>
+    <div class="mode-card" data-mode="god">
+      <div class="mc-icon">⚡</div>
+      <h2>GOD MODE</h2>
+      <p>Grow your own Sprunki society. Bless the harvest — or send lightning, meteors and plague.</p>
+      <span class="mc-go">ASCEND ▸</span>
+    </div>
+    <div class="mode-card" data-mode="aqua">
+      <div class="mc-icon">🫧</div>
+      <h2>SEA-SPRUNKIES</h2>
+      <p>A living aquarium. Sit back and watch. They don't know you're there.</p>
+      <span class="mc-go">OBSERVE ▸</span>
+    </div>
+    <div class="mode-card" data-mode="mixer">
+      <div class="mc-icon">🎛️</div>
+      <h2>STUDIO</h2>
+      <p>The real Sprunki stage — 20 original sounds, four kits, dark phases and a secret combo.</p>
+      <span class="mc-go">MIX ▸</span>
+    </div>
+  </div>
+</div>
+
+<!-- ============ SHARED HUD ============ -->
+<div id="hud" class="hidden">
+  <div id="topbar">
+    <div id="topbar-left">
+      <button id="btn-back" title="Back to menu">◂ MENU</button>
+      <div class="brand"><em>J</em>SPRUNKI<span>VERSE</span></div>
+    </div>
+    <div id="topbar-right">
+      <div id="quality-select">
+        <button data-q="medium">MED</button>
+        <button data-q="high" class="active">HIGH</button>
+        <button data-q="ultra">ULTRA</button>
+      </div>
+      <button id="btn-help" title="How to play">?</button>
+    </div>
+  </div>
+
+  <div id="toast"></div>
+  <div id="bonus-banner" class="hidden">★ SPRUNK MODE ★</div>
+
+  <!-- ===== MIXER HUD ===== -->
+  <div id="hud-mixer" class="mode-hud hidden">
+    <div id="phase-select"></div>
+    <div id="kit-select"></div>
+    <div id="roster"></div>
+  </div>
+
+  <!-- ===== WORLD HUD ===== -->
+  <div id="hud-world" class="mode-hud hidden">
+    <div id="world-top">
+      <div id="mission-tracker" class="hidden">
+        <h3 id="mt-title"></h3>
+        <p id="mt-desc"></p>
+        <div id="mt-progress"></div>
+      </div>
+      <div id="world-status">
+        <span id="day-clock">☀ 09:00</span>
+        <span id="fame">★ 0</span>
+      </div>
+    </div>
+    <div id="interact-prompt" class="hidden">Press <b>E</b> to talk</div>
+    <div id="touch-controls" class="hidden">
+      <div id="joystick"><div id="joy-knob"></div></div>
+      <div id="touch-buttons">
+        <button id="btn-jump" title="Jump">▲</button>
+        <button id="btn-interact" title="Talk">E</button>
+      </div>
+    </div>
+    <div id="dialogue" class="hidden">
+      <img id="dlg-portrait" alt="" />
+      <div id="dlg-body">
+        <h3 id="dlg-name"></h3>
+        <p id="dlg-text"></p>
+        <div id="dlg-buttons">
+          <button id="dlg-accept" class="hidden">ACCEPT</button>
+          <button id="dlg-close">CLOSE</button>
+        </div>
+      </div>
+    </div>
+    <div id="battle" class="hidden">
+      <div id="battle-head">
+        <span id="battle-title">BEAT BATTLE</span>
+        <span id="battle-score">0</span>
+      </div>
+      <div id="battle-msg">GET READY…</div>
+      <div id="battle-pads">
+        <div class="pad" data-lane="0"><span>1</span></div>
+        <div class="pad" data-lane="1"><span>2</span></div>
+        <div class="pad" data-lane="2"><span>3</span></div>
+        <div class="pad" data-lane="3"><span>4</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== GOD HUD ===== -->
+  <div id="hud-god" class="mode-hud hidden">
+    <div id="god-stats">
+      <span title="Population">⬤ <b id="gs-pop">0</b></span>
+      <span title="Food">🌾 <b id="gs-food">0</b></span>
+      <span title="Joy">♪ <b id="gs-joy">0%</b></span>
+      <span title="Faith — your power">✦ <b id="gs-faith">0</b></span>
+    </div>
+    <div id="god-toolbar">
+      <button class="gt" data-tool="select" title="Inspect">👁<i>LOOK</i></button>
+      <span class="gt-sep"></span>
+      <button class="gt bless" data-tool="harvest" title="Bless the harvest (20✦)">🌾<i>20✦</i></button>
+      <button class="gt bless" data-tool="music" title="Blessing of Music (25✦)">🎵<i>25✦</i></button>
+      <span class="gt-sep"></span>
+      <button class="gt wrath" data-tool="lightning" title="Lightning (15✦)">⚡<i>15✦</i></button>
+      <button class="gt wrath" data-tool="meteor" title="Meteor (50✦)">☄<i>50✦</i></button>
+      <button class="gt wrath" data-tool="plague" title="Plague (30✦)">☠<i>30✦</i></button>
+      <span class="gt-sep"></span>
+      <button class="gt build" data-tool="house" title="Build house (30✦)">🏠<i>30✦</i></button>
+      <button class="gt build" data-tool="farm" title="Build farm (20✦)">🌱<i>20✦</i></button>
+      <button class="gt build" data-tool="stage" title="Build stage (40✦)">🎪<i>40✦</i></button>
+    </div>
+  </div>
+
+  <!-- ===== AQUARIUM HUD ===== -->
+  <div id="hud-aqua" class="mode-hud hidden">
+    <div id="aqua-caption">SEA-SPRUNKIES &middot; do not tap the glass</div>
+  </div>
+
+  <!-- ===== HELP ===== -->
+  <div id="help-panel" class="hidden">
+    <h2 id="help-title">HOW TO PLAY</h2>
+    <ul id="help-list"></ul>
+    <button id="help-close">GOT IT</button>
+  </div>
+</div>
+
+<script type="module" src="js/main.js"></script>
+</body>
+</html>

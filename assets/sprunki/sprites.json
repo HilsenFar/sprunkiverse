@@ -1,0 +1,162 @@
+{
+ "thump": {
+  "idle": "assets/sprunki/thump.svg",
+  "idle2": "assets/sprunki/thump_idle2.svg",
+  "anim": "assets/sprunki/thump_anim.svg",
+  "anim2": "assets/sprunki/thump_anim2.svg",
+  "horror": "assets/sprunki/thump_horror.svg",
+  "horror2": "assets/sprunki/thump_horror2.svg"
+ },
+ "snapp": {
+  "idle": "assets/sprunki/snapp.svg",
+  "idle2": "assets/sprunki/snapp_idle2.svg",
+  "anim": "assets/sprunki/snapp_anim.svg",
+  "anim2": "assets/sprunki/snapp_anim2.svg",
+  "horror": "assets/sprunki/snapp_horror.svg",
+  "horror2": "assets/sprunki/snapp_horror2.svg"
+ },
+ "tika": {
+  "idle": "assets/sprunki/tika.svg",
+  "idle2": "assets/sprunki/tika_idle2.svg",
+  "anim": "assets/sprunki/tika_anim.svg",
+  "anim2": "assets/sprunki/tika_anim2.svg",
+  "horror": "assets/sprunki/tika_horror.svg",
+  "horror2": "assets/sprunki/tika_horror2.svg"
+ },
+ "funbot": {
+  "idle": "assets/sprunki/funbot.svg",
+  "idle2": "assets/sprunki/funbot_idle2.svg",
+  "anim": "assets/sprunki/funbot_anim.svg",
+  "anim2": "assets/sprunki/funbot_anim2.svg",
+  "horror": "assets/sprunki/funbot_horror.svg",
+  "horror2": "assets/sprunki/funbot_horror2.svg"
+ },
+ "vineria": {
+  "idle": "assets/sprunki/vineria.svg",
+  "idle2": "assets/sprunki/vineria_idle2.svg",
+  "anim": "assets/sprunki/vineria_anim.svg",
+  "anim2": "assets/sprunki/vineria_anim2.svg",
+  "horror": "assets/sprunki/vineria_horror.svg",
+  "horror2": "assets/sprunki/vineria_horror2.svg"
+ },
+ "gray": {
+  "idle": "assets/sprunki/gray.svg",
+  "idle2": "assets/sprunki/gray_idle2.svg",
+  "anim": "assets/sprunki/gray_anim.svg",
+  "anim2": "assets/sprunki/gray_anim2.svg",
+  "horror": "assets/sprunki/gray_horror.svg",
+  "horror2": "assets/sprunki/gray_horror2.svg"
+ },
+ "boom": {
+  "idle": "assets/sprunki/boom.svg",
+  "idle2": "assets/sprunki/boom_idle2.svg",
+  "anim": "assets/sprunki/boom_anim.svg",
+  "anim2": "assets/sprunki/boom_anim2.svg",
+  "horror": "assets/sprunki/boom_horror.svg",
+  "horror2": "assets/sprunki/boom_horror2.svg"
+ },
+ "wobb": {
+  "idle": "assets/sprunki/wobb.svg",
+  "idle2": "assets/sprunki/wobb_idle2.svg",
+  "anim": "assets/sprunki/wobb_anim.svg",
+  "anim2": "assets/sprunki/wobb_anim2.svg",
+  "horror": "assets/sprunki/wobb_horror.svg",
+  "horror2": "assets/sprunki/wobb_horror2.svg"
+ },
+ "owakcx": {
+  "idle": "assets/sprunki/owakcx.svg",
+  "idle2": "assets/sprunki/owakcx_idle2.svg",
+  "anim": "assets/sprunki/owakcx_anim.svg",
+  "anim2": "assets/sprunki/owakcx_anim2.svg",
+  "horror": "assets/sprunki/owakcx_horror.svg",
+  "horror2": "assets/sprunki/owakcx_horror2.svg"
+ },
+ "chime": {
+  "idle": "assets/sprunki/chime.svg",
+  "idle2": "assets/sprunki/chime_idle2.svg",
+  "anim": "assets/sprunki/chime_anim.svg",
+  "anim2": "assets/sprunki/chime_anim2.svg",
+  "horror": "assets/sprunki/chime_horror.svg",
+  "horror2": "assets/sprunki/chime_horror2.svg"
+ },
+ "sun": {
+  "idle": "assets/sprunki/sun.svg",
+  "idle2": "assets/sprunki/sun_idle2.svg",
+  "anim": "assets/sprunki/sun_anim.svg",
+  "anim2": "assets/sprunki/sun_anim2.svg",
+  "horror": "assets/sprunki/sun_horror.svg",
+  "horror2": "assets/sprunki/sun_horror2.svg"
+ },
+ "nova": {
+  "idle": "assets/sprunki/nova.svg",
+  "idle2": "assets/sprunki/nova_idle2.svg",
+  "anim": "assets/sprunki/nova_anim.svg",
+  "anim2": "assets/sprunki/nova_anim2.svg",
+  "horror": "assets/sprunki/nova_horror.svg",
+  "horror2": "assets/sprunki/nova_horror2.svg"
+ },
+ "drift": {
+  "idle": "assets/sprunki/drift.svg",
+  "idle2": "assets/sprunki/drift_idle2.svg",
+  "anim": "assets/sprunki/drift_anim.svg",
+  "anim2": "assets/sprunki/drift_anim2.svg",
+  "horror": null,
+  "horror2": null
+ },
+ "simon": {
+  "idle": "assets/sprunki/simon.svg",
+  "idle2": "assets/sprunki/simon_idle2.svg",
+  "anim": "assets/sprunki/simon_anim.svg",
+  "anim2": "assets/sprunki/simon_anim2.svg",
+  "horror": "assets/sprunki/simon_horror.svg",
+  "horror2": "assets/sprunki/simon_horror2.svg"
+ },
+ "tunner": {
+  "idle": "assets/sprunki/tunner.svg",
+  "idle2": "assets/sprunki/tunner_idle2.svg",
+  "anim": "assets/sprunki/tunner_anim.svg",
+  "anim2": "assets/sprunki/tunner_anim2.svg",
+  "horror": "assets/sprunki/tunner_horror.svg",
+  "horror2": "assets/sprunki/tunner_horror2.svg"
+ },
+ "lime": {
+  "idle": "assets/sprunki/lime.svg",
+  "idle2": "assets/sprunki/lime_idle2.svg",
+  "anim": "assets/sprunki/lime_anim.svg",
+  "anim2": "assets/sprunki/lime_anim2.svg",
+  "horror": "assets/sprunki/lime_horror.svg",
+  "horror2": "assets/sprunki/lime_horror2.svg"
+ },
+ "voxo": {
+  "idle": "assets/sprunki/voxo.svg",
+  "idle2": "assets/sprunki/voxo_idle2.svg",
+  "anim": "assets/sprunki/voxo_anim.svg",
+  "anim2": "assets/sprunki/voxo_anim2.svg",
+  "horror": "assets/sprunki/voxo_horror.svg",
+  "horror2": "assets/sprunki/voxo_horror2.svg"
+ },
+ "mara": {
+  "idle": "assets/sprunki/mara.svg",
+  "idle2": "assets/sprunki/mara_idle2.svg",
+  "anim": "assets/sprunki/mara_anim.svg",
+  "anim2": "assets/sprunki/mara_anim2.svg",
+  "horror": "assets/sprunki/mara_horror.svg",
+  "horror2": "assets/sprunki/mara_horror2.svg"
+ },
+ "jevin": {
+  "idle": "assets/sprunki/jevin.svg",
+  "idle2": "assets/sprunki/jevin_idle2.svg",
+  "anim": "assets/sprunki/jevin_anim.svg",
+  "anim2": "assets/sprunki/jevin_anim2.svg",
+  "horror": "assets/sprunki/jevin_horror.svg",
+  "horror2": "assets/sprunki/jevin_horror2.svg"
+ },
+ "echo": {
+  "idle": "assets/sprunki/echo.svg",
+  "idle2": "assets/sprunki/echo_idle2.svg",
+  "anim": "assets/sprunki/echo_anim.svg",
+  "anim2": "assets/sprunki/echo_anim2.svg",
+  "horror": null,
+  "horror2": null
+ }
+}

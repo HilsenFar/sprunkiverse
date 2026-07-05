@@ -1,0 +1,85 @@
+{
+ "bpm": 100,
+ "sounds": {
+  "thump": {
+   "normal": "assets/sprunki/sounds/thump.mp3",
+   "horror": "assets/sprunki/sounds/thump_h.mp3"
+  },
+  "snapp": {
+   "normal": "assets/sprunki/sounds/snapp.mp3",
+   "horror": "assets/sprunki/sounds/snapp_h.mp3"
+  },
+  "tika": {
+   "normal": "assets/sprunki/sounds/tika.mp3",
+   "horror": "assets/sprunki/sounds/tika_h.mp3"
+  },
+  "funbot": {
+   "normal": "assets/sprunki/sounds/funbot.mp3",
+   "horror": "assets/sprunki/sounds/funbot_h.mp3"
+  },
+  "vineria": {
+   "normal": "assets/sprunki/sounds/vineria.mp3",
+   "horror": "assets/sprunki/sounds/vineria_h.mp3"
+  },
+  "gray": {
+   "normal": "assets/sprunki/sounds/gray.mp3",
+   "horror": "assets/sprunki/sounds/gray_h.mp3"
+  },
+  "boom": {
+   "normal": "assets/sprunki/sounds/boom.mp3",
+   "horror": "assets/sprunki/sounds/boom_h.mp3"
+  },
+  "wobb": {
+   "normal": "assets/sprunki/sounds/wobb.mp3",
+   "horror": "assets/sprunki/sounds/wobb_h.mp3"
+  },
+  "owakcx": {
+   "normal": "assets/sprunki/sounds/owakcx.mp3",
+   "horror": "assets/sprunki/sounds/owakcx_h.mp3"
+  },
+  "chime": {
+   "normal": "assets/sprunki/sounds/chime.mp3",
+   "horror": "assets/sprunki/sounds/chime_h.mp3"
+  },
+  "sun": {
+   "normal": "assets/sprunki/sounds/sun.mp3",
+   "horror": "assets/sprunki/sounds/sun_h.mp3"
+  },
+  "nova": {
+   "normal": "assets/sprunki/sounds/nova.mp3",
+   "horror": "assets/sprunki/sounds/nova_h.mp3"
+  },
+  "drift": {
+   "normal": "assets/sprunki/sounds/drift.mp3",
+   "horror": "assets/sprunki/sounds/drift_h.mp3"
+  },
+  "simon": {
+   "normal": "assets/sprunki/sounds/simon.mp3",
+   "horror": "assets/sprunki/sounds/simon_h.mp3"
+  },
+  "tunner": {
+   "normal": "assets/sprunki/sounds/tunner.mp3",
+   "horror": "assets/sprunki/sounds/tunner_h.mp3"
+  },
+  "lime": {
+   "normal": "assets/sprunki/sounds/lime.mp3",
+   "horror": "assets/sprunki/sounds/lime_h.mp3"
+  },
+  "voxo": {
+   "normal": "assets/sprunki/sounds/voxo.mp3",
+   "horror": "assets/sprunki/sounds/voxo_h.mp3"
+  },
+  "mara": {
+   "normal": "assets/sprunki/sounds/mara.mp3",
+   "horror": "assets/sprunki/sounds/mara_h.mp3"
+  },
+  "jevin": {
+   "normal": "assets/sprunki/sounds/jevin.mp3",
+   "horror": "assets/sprunki/sounds/jevin_h.mp3"
+  },
+  "echo": {
+   "normal": "assets/sprunki/sounds/echo.mp3",
+   "horror": "assets/sprunki/sounds/echo_h.mp3"
+  }
+ }
+}
