@@ -29,10 +29,10 @@ const HELP = {
   ],
   god: [
     '<b>Drag</b> to orbit · <b>scroll</b> zoom · pick a tool, click the island.',
-    '<b>✦ Faith</b> flows from joyful Sprunkis — spend it on blessings, wrath and buildings.',
-    '<b>Bless:</b> harvest fills food, music makes everyone dance (and breed).',
-    '<b>Wrath:</b> lightning, meteors and plague. They will remember this.',
-    '<b>Build</b> houses to raise the population cap, farms for food, stages for joy.',
+    'Your tribe works on its own: <b>gatherers</b> bring food, <b>lumberjacks</b> chop trees for wood, <b>vibe keepers</b> dance faith into existence.',
+    '<b>Advance through 4 ages</b> — Stone Groove → Bronze Beat → Electric → Neon. Each age unlocks buildings & powers, and adds an instrument to the island\'s song.',
+    '<b>⏫ AGE UP</b> costs food + wood + faith and requires key buildings (hover the button).',
+    '<b>Wrath</b> (lightning → plague → meteor) unlocks as you progress. Win by raising the <b>💎 Neon Monument</b>.',
   ],
   aqua: [
     'There is nothing to do.',

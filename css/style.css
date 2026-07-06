@@ -698,6 +698,18 @@ html, body {
 .gt:hover { transform: translateY(-4px); border-color: rgba(140,150,255,.5); }
 .gt.active { border-color: var(--gold); box-shadow: 0 0 16px rgba(255,215,110,.45); }
 .gt.wrath.active { border-color: var(--accent); box-shadow: 0 0 16px rgba(255,77,109,.5); }
+.gt.advance {
+  border-color: rgba(255, 215, 110, 0.5);
+  background: linear-gradient(160deg, rgba(255, 215, 110, 0.16), rgba(255, 77, 109, 0.1));
+}
+.gt.advance i { color: var(--gold); }
+.gt.advance:hover { box-shadow: 0 0 18px rgba(255, 215, 110, 0.55); }
+#gs-age {
+  color: var(--gold) !important;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  border-color: rgba(255, 215, 110, 0.4) !important;
+}
 .gt-sep { width: 1px; height: 40px; background: var(--line); margin: 0 4px; flex: 0 0 auto; }
 
 /* ================= AQUARIUM ================= */
