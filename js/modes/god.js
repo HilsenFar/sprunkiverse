@@ -236,7 +236,7 @@ export class GodMode {
     // choppable trees
     const trunkMat = new THREE.MeshStandardMaterial({ color: 0x6b4a33, roughness: 0.9 });
     const folMat = new THREE.MeshStandardMaterial({ color: 0x3f9152, roughness: 0.85 });
-    for (let i = 0; i < 24; i++) {
+    for (let i = 0; i < 32; i++) {
       const a = rand(Math.PI * 2), r = rand(16, 52);
       const x = Math.cos(a) * r, z = Math.sin(a) * r;
       const h = heightAt(x, z);
@@ -1125,17 +1125,20 @@ export class GodMode {
       this.ghost.material.color.set(ok ? 0x7cff9d : 0xff5a5a);
     }
 
-    // trees: respawn cycle
+    // trees: respawn cycle — a regrowing sapling only becomes choppable once
+    // fully grown, so camping lumberjacks can't mow it the moment it appears
     for (const tree of this.trees) {
-      if (tree.alive) continue;
+      if (tree.alive || tree.growing) continue;
       tree.respawn -= dt;
       if (tree.respawn <= 0) {
-        tree.alive = true;
+        tree.growing = true;
         tree.group.visible = true;
         tree.group.rotation.z = 0;
         const target = tree.baseScale;
         tree.group.scale.setScalar(0.01);
-        this.ctx.engine.addTween((tt) => tree.group.scale.setScalar(Math.max(0.01, target * tt)), 1.2);
+        this.ctx.engine.addTween((tt) => tree.group.scale.setScalar(Math.max(0.01, target * tt)), 1.6, {
+          onDone: () => { tree.growing = false; tree.alive = true; },
+        });
       }
     }
 
@@ -1248,7 +1251,7 @@ export class GodMode {
         if (v.workT > 3.5) {
           v.workT = 0;
           tree.alive = false;
-          tree.respawn = rand(35, 50);
+          tree.respawn = rand(16, 26);
           this.wood += 2;
           v.jobTarget = null;
           const grp = tree.group;
