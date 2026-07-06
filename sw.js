@@ -2,7 +2,7 @@
 // Bump VERSION on EVERY deploy (it is what makes clients pick up a
 // consistent new build atomically). Stale-while-revalidate on code/data
 // is the safety net if a deploy ever forgets the bump.
-const VERSION = 'sprunkiverse-v3';
+const VERSION = 'sprunkiverse-v4';
 
 // strict shell — install fails (and the old version keeps serving) if any of
 // these is missing, so list only files that always ship

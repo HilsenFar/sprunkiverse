@@ -30,9 +30,10 @@ const HELP = {
   god: [
     '<b>Drag</b> to orbit · <b>scroll</b> zoom · pick a tool, click the island.',
     'Your tribe works on its own: <b>gatherers</b> bring food, <b>lumberjacks</b> chop trees for wood, <b>vibe keepers</b> dance faith into existence.',
+    'Villagers <b>ripen at their craft</b>: stick with one job and they climb gatherer → journeyman → <b>maestro</b> (glowing gold — faster, plus a bonus each cycle). The ★ by the pop counter shows how many maestros you have.',
     '<b>Advance through 4 ages</b> — Stone Groove → Bronze Beat → Electric → Neon. Each age unlocks buildings & powers, and adds an instrument to the island\'s song.',
     '<b>⏫ AGE UP</b> costs food + wood + faith and requires key buildings (hover the button).',
-    '<b>Wrath</b> (lightning → plague → meteor) unlocks as you progress. Win by raising the <b>💎 Neon Monument</b>.',
+    '<b>Wrath</b> (lightning → plague → meteor) also strikes your own people — losing a maestro sets you back minutes. The <b>🛡 ANTHEM</b> blessing shields one villager from the next lethal hit. Win by raising the <b>💎 Neon Monument</b>.',
   ],
   aqua: [
     'There is nothing to do.',

@@ -32,6 +32,7 @@ const TOOLS = {
   select:    { icon: '👁', label: 'LOOK' },
   harvest:   { icon: '🌾', label: 'HARVEST', kind: 'bless', faith: 20 },
   music:     { icon: '🎵', label: 'MUSIC', kind: 'bless', faith: 25 },
+  anthem:    { icon: '🛡', label: 'ANTHEM', kind: 'bless', faith: 20 },
   lightning: { icon: '⚡', label: 'BOLT', kind: 'wrath', faith: 15 },
   plague:    { icon: '☠', label: 'PLAGUE', kind: 'wrath', faith: 30 },
   meteor:    { icon: '☄', label: 'METEOR', kind: 'wrath', faith: 50 },
@@ -63,7 +64,7 @@ const AGES = [
   },
   {
     num: 'Ⅱ', name: 'BRONZE BEAT',
-    tools: ['select', 'harvest', 'music', 'lightning', 'plague', 'hut', 'totem', 'house', 'farm', 'drum'],
+    tools: ['select', 'harvest', 'music', 'anthem', 'lightning', 'plague', 'hut', 'totem', 'house', 'farm', 'drum'],
     ambient: [['thump', 0.12], ['boom', 0.1]],
     fog: 0x18183a, sun: 0xffd2a0, hemi: 0.55,
     advance: {
@@ -74,7 +75,7 @@ const AGES = [
   },
   {
     num: 'Ⅲ', name: 'ELECTRIC',
-    tools: ['select', 'harvest', 'music', 'lightning', 'plague', 'meteor', 'hut', 'house', 'farm', 'drum', 'speaker'],
+    tools: ['select', 'harvest', 'music', 'anthem', 'lightning', 'plague', 'meteor', 'hut', 'house', 'farm', 'drum', 'speaker'],
     ambient: [['thump', 0.12], ['boom', 0.1], ['chime', 0.09]],
     fog: 0x121c40, sun: 0xffe0b8, hemi: 0.6,
     advance: {
@@ -85,7 +86,7 @@ const AGES = [
   },
   {
     num: 'Ⅳ', name: 'NEON',
-    tools: ['select', 'harvest', 'music', 'lightning', 'plague', 'meteor', 'house', 'farm', 'drum', 'speaker', 'stage', 'eqtower', 'monument'],
+    tools: ['select', 'harvest', 'music', 'anthem', 'lightning', 'plague', 'meteor', 'house', 'farm', 'drum', 'speaker', 'stage', 'eqtower', 'monument'],
     ambient: [['thump', 0.12], ['boom', 0.1], ['chime', 0.09], ['nova', 0.08], ['voxo', 0.08]],
     fog: 0x1a1030, sun: 0xffb8e0, hemi: 0.65,
     advance: null,
@@ -95,6 +96,31 @@ for (const a of AGES) {
   a.fogC = new THREE.Color(a.fog);
   a.sunC = new THREE.Color(a.sun);
 }
+
+// ------------------------------------------------------------
+//  Mastery — performers ripen at their craft (AoE2 upgrade lines).
+//  Stick with one job and a villager climbs gatherer → journeyman →
+//  maestro: quicker, and at the top a small aura bonus. XP is stored
+//  PER job, so a benched veteran is still a maestro when re-hired.
+// ------------------------------------------------------------
+const MASTERY = {
+  tiers: [
+    { name: 'gatherer',   xp: 0,  workMul: 1.0 },
+    { name: 'journeyman', xp: 8,  workMul: 1.3 },
+    { name: 'maestro',    xp: 20, workMul: 1.6 },
+  ],
+  // maestro (top tier) bonus: +1 resource per cycle, or +1 faith per tick
+  aura: { wood: 1, food: 1, vibe: 1 },
+  // a Sprunki's category quietly ripens one kind of work 50% faster
+  affinity: { beat: 'labor', effect: 'labor', melody: 'groove', voice: 'groove' },
+  jobClass: { wood: 'labor', food: 'labor', vibe: 'groove' },
+};
+const tierOf = (v) => {
+  const x = v.xp?.[v.job] ?? 0;
+  let t = 0;
+  for (let i = 0; i < MASTERY.tiers.length; i++) if (x >= MASTERY.tiers[i].xp) t = i;
+  return t;
+};
 
 export class GodMode {
   constructor(ctx) {
@@ -495,6 +521,7 @@ export class GodMode {
       hunger: rand(0.1, 0.4), joy: rand(0.5, 0.8), health: 1,
       sick: false, panic: 0, dead: false,
       job: 'vibe', workT: 0, carrying: false, jobTarget: null,
+      xp: { wood: 0, food: 0, vibe: 0 }, tier: 0, shield: false, _immuneT: 0,
       target: rig.group.position.clone(), waitT: rand(1, 3),
     };
     this.villagers.push(v);
@@ -513,10 +540,14 @@ export class GodMode {
         srig.group.rotation.copy(rig.group.rotation);
         srig.group.traverse((o) => { if (o.isMesh) o.castShadow = true; });
         srig.cameraRef = this.camera;
-        if (v.sick) srig.setTint('sick');
         this.scene.add(srig.group);
         this.scene.remove(rig.group);
         v.rig = srig;
+        this._refreshLook(v);
+        if (v._halo) {          // the halo was a child of the old rig — re-attach to the sprite
+          v._halo.geometry.dispose(); v._halo.material.dispose(); v._halo = null;
+        }
+        if (v.shield) this._setShieldMesh(v, true);
       });
     }).catch(() => {});
     return v;
@@ -525,6 +556,7 @@ export class GodMode {
   _kill(v, cause) {
     if (v.dead) return;
     v.dead = true;
+    this._setShieldMesh(v, false);
     this.ctx.ui.toast(`${v.spec.name} has perished (${cause})`);
     const rig = v.rig;
     this.ctx.engine.addTween((t) => {
@@ -560,7 +592,68 @@ export class GodMode {
     });
   }
 
-  /** Universim-style: the colony assigns its own workers. */
+  /** Grant work-XP; a matching Sprunki category ripens the craft faster. */
+  _gainXp(v, job, amt = 1) {
+    if (!v.xp) return;
+    const aff = MASTERY.affinity[v.spec.cat] === MASTERY.jobClass[job] ? 1.5 : 1;
+    v.xp[job] = (v.xp[job] ?? 0) + amt * aff;
+    const t = tierOf(v);
+    if (t !== v.tier) { v.tier = t; this._refreshLook(v); }
+  }
+
+  /** Sick beats maestro-gold beats normal — pick the tint that fits the state. */
+  _refreshLook(v) {
+    v.rig.setTint(v.sick ? 'sick' : (v.tier === 2 ? 'gold' : 'normal'));
+  }
+
+  _shieldBurst(v) {
+    this.bursts.spawn(v.rig.group.position.clone().add(new THREE.Vector3(0, 1.2, 0)),
+      { count: 40, colors: [0xffd76e, 0xffffff, 0x7cff9d], speed: 4, gravity: -2 });
+    this.ctx.ui.toast(`🛡 The Anthem shields ${v.spec.name}!`);
+    this.ctx.audio.sfx('bless');
+  }
+
+  /** Change a villager's job AND keep the cached mastery tier + look in sync. */
+  _setJob(v, job) {
+    if (v.job === job) return;
+    v.job = job; v.jobTarget = null; v.workT = 0;
+    v.tier = tierOf(v);
+    this._refreshLook(v);
+  }
+
+  /** A gold halo marks a villager the Anthem is protecting, right now. */
+  _setShieldMesh(v, on) {
+    if (on && !v._halo) {
+      const halo = new THREE.Mesh(
+        new THREE.TorusGeometry(0.85, 0.06, 8, 24),
+        new THREE.MeshBasicMaterial({ color: 0xffe08a, transparent: true, opacity: 0.85 }));
+      halo.rotation.x = Math.PI / 2;
+      halo.position.y = 1.95;
+      v.rig.group.add(halo);
+      v._halo = halo;
+    } else if (!on && v._halo) {
+      v._halo.parent?.remove(v._halo);
+      v._halo.geometry.dispose();
+      v._halo.material.dispose();
+      v._halo = null;
+    }
+  }
+
+  /** True if divine harm is blocked by an Anthem shield or its fading echo. */
+  _blockHarm(v, panic = 4) {
+    if (v._immuneT > 0) return true;              // the anthem still rings
+    if (v.shield) {
+      v.shield = false;
+      v._immuneT = 2;                             // brief grace so they flee the danger
+      v.panic = Math.max(v.panic, panic);
+      this._setShieldMesh(v, false);
+      this._shieldBurst(v);
+      return true;
+    }
+    return false;
+  }
+
+  /** Universim-style: the colony assigns its own workers — mastery-aware. */
   _assignJobs() {
     const alive = this.villagers.filter((v) => !v.dead && v.panic <= 0);
     if (!alive.length) return;
@@ -569,17 +662,29 @@ export class GodMode {
     else if (this.wood < 90) this._woodSat = false;
     if (this.food >= 150) this._foodSat = true;
     else if (this.food < 110) this._foodSat = false;
-    const wantWood = this._woodSat ? 0 : Math.ceil(alive.length * 0.3);
-    const wantFood = this._foodSat ? 0 : Math.ceil(alive.length * 0.35);
-    let wood = alive.filter((v) => v.job === 'wood').length;
-    let food = alive.filter((v) => v.job === 'food').length;
-    for (const v of alive) {
-      if (v.job === 'wood' && wood > wantWood) { v.job = 'vibe'; v.workT = 0; wood--; }
-      if (v.job === 'food' && food > wantFood) { v.job = 'vibe'; v.workT = 0; food--; }
+    const want = {
+      wood: this._woodSat ? 0 : Math.ceil(alive.length * 0.3),
+      food: this._foodSat ? 0 : Math.ceil(alive.length * 0.35),
+    };
+    const xpAt = (v, job) => v.xp?.[job] ?? 0;
+    const setJob = (v, job) => this._setJob(v, job);
+    // demote the LEAST-practised first, so hard-won maestros keep their line
+    for (const job of ['wood', 'food']) {
+      const crew = alive.filter((v) => v.job === job);
+      if (crew.length > want[job]) {
+        crew.sort((a, b) => xpAt(a, job) - xpAt(b, job));
+        for (let i = 0; i < crew.length - want[job]; i++) setJob(crew[i], 'vibe');
+      }
     }
-    for (const v of alive) {
-      if (wood < wantWood && v.job === 'vibe') { v.job = 'wood'; v.jobTarget = null; v.workT = 0; wood++; }
-      else if (food < wantFood && v.job === 'vibe') { v.job = 'food'; v.jobTarget = null; v.workT = 0; food++; }
+    // re-hire veterans first: whoever already has the most XP on this line
+    for (const job of ['wood', 'food']) {
+      let have = alive.filter((v) => v.job === job).length;
+      if (have >= want[job]) continue;
+      const pool = alive.filter((v) => v.job === 'vibe').sort((a, b) => xpAt(b, job) - xpAt(a, job));
+      for (const v of pool) {
+        if (have >= want[job]) break;
+        setJob(v, job); have++;
+      }
     }
   }
 
@@ -711,7 +816,8 @@ export class GodMode {
 
   _statsUI() {
     const alive = this.villagers.filter((v) => !v.dead);
-    document.getElementById('gs-pop').textContent = String(alive.length);
+    const maestros = alive.filter((v) => v.tier === 2).length;
+    document.getElementById('gs-pop').textContent = String(alive.length) + (maestros ? ` ★${maestros}` : '');
     document.getElementById('gs-food').textContent = String(Math.floor(this.food));
     document.getElementById('gs-wood').textContent = String(Math.floor(this.wood));
     const joy = alive.length ? alive.reduce((s, v) => s + v.joy, 0) / alive.length : 0;
@@ -827,26 +933,46 @@ export class GodMode {
     return true;
   }
 
+  _pickVillager() {
+    this.raycaster.setFromCamera(this.pointer, this.camera);
+    let best = null, bd = Infinity;
+    for (const v of this.villagers) {
+      if (v.dead) continue;
+      const d = this.raycaster.ray.distanceToPoint(
+        v.rig.group.position.clone().add(new THREE.Vector3(0, 1, 0)));
+      if (d < 1.4 && d < bd) { bd = d; best = v; }
+    }
+    return best;
+  }
+
   _groundClick(e) {
     this.pointer.set((e.clientX / innerWidth) * 2 - 1, -(e.clientY / innerHeight) * 2 + 1);
     const tool = this.tool;
     const t = TOOLS[tool];
 
     if (tool === 'select') {
-      this.raycaster.setFromCamera(this.pointer, this.camera);
-      let best = null, bd = Infinity;
-      for (const v of this.villagers) {
-        if (v.dead) continue;
-        const d = this.raycaster.ray.distanceToPoint(
-          v.rig.group.position.clone().add(new THREE.Vector3(0, 1, 0)));
-        if (d < 1.2 && d < bd) { bd = d; best = v; }
-      }
+      const best = this._pickVillager();
       if (best) {
         const jobName = { wood: 'lumberjack', food: 'gatherer', vibe: 'vibe keeper' }[best.job] ?? best.job;
+        const rank = MASTERY.tiers[best.tier]?.name ?? '';
         this.ctx.ui.toast(
-          `${best.spec.name} — ${jobName} · hunger ${Math.round(best.hunger * 100)}% · joy ${Math.round(best.joy * 100)}%` +
-          `${best.sick ? ' · SICK' : ''}`);
+          `${best.spec.name} — ${rank} ${jobName} · joy ${Math.round(best.joy * 100)}%` +
+          `${best.shield ? ' · 🛡' : ''}${best.sick ? ' · SICK' : ''}`);
       }
+      return;
+    }
+
+    if (tool === 'anthem') {
+      const v = this._pickVillager();
+      if (!v) { this.ctx.ui.toast('Aim the Anthem at a villager'); return; }
+      if (v.shield) { this.ctx.ui.toast(`${v.spec.name} is already shielded`); return; }
+      if (!this._pay(t)) return;
+      v.shield = true;
+      this._setShieldMesh(v, true);
+      this.ctx.audio.sfx('bless');
+      this.bursts.spawn(v.rig.group.position.clone().add(new THREE.Vector3(0, 1.2, 0)),
+        { count: 44, colors: [0xffd76e, 0xffffff], speed: 3.5, gravity: -1.5 });
+      this.ctx.ui.toast(`🛡 ${v.spec.name} is protected by the Anthem`);
       return;
     }
 
@@ -946,8 +1072,9 @@ export class GodMode {
     for (const v of this.villagers) {
       if (v.dead) continue;
       const d = v.rig.group.position.distanceTo(p);
-      if (d < 3.2) { v.health = 0; this._kill(v, 'smitten'); }
-      else if (d < 14) { v.panic = 4; v.joy = clamp(v.joy - 0.25, 0, 1); }
+      if (d < 3.2) {
+        if (!this._blockHarm(v, 4)) { v.health = 0; this._kill(v, 'smitten'); }
+      } else if (d < 14) { v.panic = 4; v.joy = clamp(v.joy - 0.25, 0, 1); }
     }
   }
 
@@ -989,8 +1116,9 @@ export class GodMode {
     for (const v of this.villagers) {
       if (v.dead) continue;
       const d = v.rig.group.position.distanceTo(p);
-      if (d < 6.5) { v.health = 0; this._kill(v, 'meteor'); }
-      else if (d < 20) { v.panic = 5; v.joy = clamp(v.joy - 0.35, 0, 1); }
+      if (d < 6.5) {
+        if (!this._blockHarm(v, 5)) { v.health = 0; this._kill(v, 'meteor'); }
+      } else if (d < 20) { v.panic = 5; v.joy = clamp(v.joy - 0.35, 0, 1); }
     }
   }
 
@@ -1047,7 +1175,7 @@ export class GodMode {
       if (v.sick) {
         v.health -= 0.045;
         v.joy = clamp(v.joy - 0.04, 0, 1);
-        if (Math.random() < 0.07) { v.sick = false; v.rig.setTint('normal'); }
+        if (Math.random() < 0.07) { v.sick = false; this._refreshLook(v); }
       }
       if (v.hunger >= 1) v.health -= 0.05;
       if (v.health <= 0) { this._kill(v, v.sick ? 'plague' : 'starvation'); continue; }
@@ -1059,7 +1187,12 @@ export class GodMode {
         + (v.job === 'vibe' ? 0.02 : 0)
         - (v.hunger > 0.8 ? 0.03 : 0), 0, 1);
       joySum += v.joy;
-      if (v.joy > 0.6 && this.faith < 300) this.faith += 1;
+      if (v.joy > 0.6 && this.faith < 300) {
+        // every joyful villager tithes; a maestro vibe-keeper tithes extra
+        const bonus = (v.job === 'vibe' && v.tier === 2) ? MASTERY.aura.vibe : 0;
+        this.faith = Math.min(this.faith + 1 + bonus, 300);
+        if (v.job === 'vibe') this._gainXp(v, 'vibe');
+      }
     }
     // EQ towers hum pure faith — passive income stops at the 300 cap
     if (this.faith < 300) this.faith = Math.min(this.faith + (this.eqTowers ?? 0), 300);
@@ -1171,8 +1304,7 @@ export class GodMode {
       for (const v of this.villagers) {
         if (v.dead || v.sick) continue;
         if (v.rig.group.position.distanceTo(pl.pos) < pl.r) {
-          v.sick = true;
-          v.rig.setTint('sick');
+          if (!this._blockHarm(v, 3)) { v.sick = true; this._refreshLook(v); }
         }
       }
     }
@@ -1208,6 +1340,9 @@ export class GodMode {
     const pos = v.rig.group.position;
     let anim = 'idle';
 
+    if (v._immuneT > 0) v._immuneT -= dt;
+    if (v._halo) { v._halo.rotation.z += dt * 2.2; v._halo.position.y = 1.95 + Math.sin(this.ctx.engine.time * 3) * 0.08; }
+
     if (v.panic > 0) {
       v.panic -= dt;
       anim = 'panic';
@@ -1242,17 +1377,18 @@ export class GodMode {
         v.workT = 0;
       }
       const tree = v.jobTarget;
-      if (!tree) { v.job = 'vibe'; }
+      if (!tree) { this._setJob(v, 'vibe'); }
       else if (pos.distanceTo(tree.pos) > 2.2) { this._walkTo(v, tree.pos, 2.8, dt); anim = 'walk'; }
       else {
         anim = 'work';
         v.workT += dt;
         tree.group.rotation.z = Math.sin(v.workT * 14) * 0.02;   // chop shake
-        if (v.workT > 3.5) {
+        if (v.workT > 3.5 / MASTERY.tiers[v.tier].workMul) {
           v.workT = 0;
           tree.alive = false;
           tree.respawn = rand(16, 26);
-          this.wood += 2;
+          this.wood += 2 + (v.tier === 2 ? MASTERY.aura.wood : 0);
+          this._gainXp(v, 'wood');
           v.jobTarget = null;
           const grp = tree.group;
           this.ctx.engine.addTween((tt) => { grp.rotation.z = tt * 1.35; }, 0.8, {
@@ -1266,14 +1402,15 @@ export class GodMode {
     } else if (v.job === 'food') {
       // gatherer: work the nearest farm or berry bush
       const spot = this._nearestOf(pos, this._foodSpots());
-      if (!spot) { v.job = 'vibe'; }
+      if (!spot) { this._setJob(v, 'vibe'); }
       else if (pos.distanceTo(spot) > 2.4) { this._walkTo(v, spot, 2.8, dt); anim = 'walk'; }
       else {
         anim = 'work';
         v.workT += dt;
-        if (v.workT > 4) {
+        if (v.workT > 4 / MASTERY.tiers[v.tier].workMul) {
           v.workT = 0;
-          this.food += 2;
+          this.food += 2 + (v.tier === 2 ? MASTERY.aura.food : 0);
+          this._gainXp(v, 'food');
           this.bursts.spawn(spot.clone().add(new THREE.Vector3(0, 1, 0)),
             { count: 10, colors: [0xffd76e, 0xb6ff8e], speed: 1.6, gravity: -3, life: 0.7 });
           this._statsUI();
