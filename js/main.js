@@ -10,6 +10,7 @@ import { WorldMode } from './modes/world.js';
 import { GodMode } from './modes/god.js';
 import { AquariumMode } from './modes/aquarium.js';
 import { MixerMode } from './modes/mixer.js';
+import { WarsMode } from './modes/wars.js';
 
 const $ = (id) => document.getElementById(id);
 
@@ -19,6 +20,7 @@ const HELP = {
     '<b>GOD MODE</b> — raise a society. Bless it. Or not.',
     '<b>SEA-SPRUNKIES</b> — an aquarium. Interaction is forbidden (there is none).',
     '<b>STUDIO</b> — the real Sprunki stage: 20 original sounds, dark phases, secret combos.',
+    '<b>SPRUNKI WARS</b> — a real-time strategy skirmish: raise a band, wage war on THE STATIC.',
   ],
   world: [
     '<b>WASD</b> move · <b>SHIFT</b> run · <b>SPACE</b> jump · <b>drag</b> to orbit camera · <b>scroll</b> zoom.',
@@ -47,6 +49,14 @@ const HELP = {
     '<b>PHASES Ⅰ–Ⅳ</b> (or key <b>P</b>) drag the whole mix darker — every loop is re-composed per phase.',
     'Put <b>BLACK</b> on stage and horror mode takes over. Add <b>OWAKCX</b> too… if you dare.',
     'A certain <b>combo of four</b> unlocks SPRUNK MODE…',
+  ],
+  wars: [
+    '<b>An RTS skirmish.</b> You command <b>YOUR BAND</b> (cyan) against the AI faction <b>THE STATIC</b> (red — the same Sprunkis, corrupted).',
+    '<b>Left-click</b> a unit or <b>drag a box</b> to select · <b>right-click</b> to move / attack (tap-to-command on touch).',
+    '<b>Middle-drag</b> orbits the camera · <b>scroll</b> zooms · <b>WASD / arrows</b> scroll across the battlefield.',
+    'Your <b>ROADIES</b> mine <b>♪ BEATS</b> from speaker nodes. Spend beats to train an army from your <b>STUDIO</b>.',
+    '<b>THUMPER</b> tanks & bashes · <b>WOBBLER</b> shoots at range · <b>CHORISTER</b> heals nearby allies · <b>DIVA</b> lobs area-blast artillery.',
+    'Build extra <b>STUDIOS</b> forward, buy <b>AMP UP</b> for +30% damage, then level THE STATIC\'s <b>Main Stage</b> to win. Lose yours and it\'s over.',
   ],
 };
 
@@ -122,6 +132,7 @@ function getMode(name) {
       god: () => new GodMode(ctx),
       aqua: () => new AquariumMode(ctx),
       mixer: () => new MixerMode(ctx),
+      wars: () => new WarsMode(ctx),
     }[name]();
   }
   return modes[name];
@@ -163,7 +174,7 @@ document.querySelectorAll('#quality-select button').forEach((btn) => {
 function showHelp() {
   $('help-title').textContent = {
     menu: 'THE SPRUNKIVERSE', world: 'SPRUNKI WORLD', god: 'GOD MODE',
-    aqua: 'SEA-SPRUNKIES', mixer: 'STUDIO',
+    aqua: 'SEA-SPRUNKIES', mixer: 'STUDIO', wars: 'SPRUNKI WARS',
   }[currentName] ?? 'HOW TO PLAY';
   $('help-list').innerHTML = (HELP[currentName] ?? HELP.menu).map((l) => `<li>${l}</li>`).join('');
   $('help-panel').classList.remove('hidden');

@@ -25,12 +25,13 @@
 <body>
 
 <canvas id="stage"></canvas>
+<div id="wars-select-box"></div>
 
 <!-- ============ LOADING / TITLE ============ -->
 <div id="overlay">
   <div class="title-wrap">
     <h1 class="logo"><em>JASON'S</em>SPRUNKI<span>VERSE</span></h1>
-    <p class="tagline">OPEN WORLD &middot; GOD SIM &middot; AQUARIUM &middot; MUSIC MIXER</p>
+    <p class="tagline">OPEN WORLD &middot; GOD SIM &middot; AQUARIUM &middot; MUSIC MIXER &middot; RTS</p>
     <div id="loading-block">
       <div class="loadbar"><div id="loadbar-fill"></div></div>
       <p id="load-status">warming up the stage…</p>
@@ -68,6 +69,12 @@
       <h2>STUDIO</h2>
       <p>The real Sprunki stage — 20 original sounds, four kits, dark phases and a secret combo.</p>
       <span class="mc-go">MIX ▸</span>
+    </div>
+    <div class="mode-card" data-mode="wars">
+      <div class="mc-icon">⚔️</div>
+      <h2>SPRUNKI WARS</h2>
+      <p>Real-time strategy. Mine beats, raise a band, and wage war on THE STATIC — the corrupted Sprunkis.</p>
+      <span class="mc-go">COMMAND ▸</span>
     </div>
   </div>
 </div>
@@ -162,6 +169,22 @@
   <!-- ===== AQUARIUM HUD ===== -->
   <div id="hud-aqua" class="mode-hud hidden">
     <div id="aqua-caption">SEA-SPRUNKIES &middot; do not tap the glass</div>
+  </div>
+
+  <!-- ===== WARS HUD ===== -->
+  <div id="hud-wars" class="mode-hud hidden">
+    <div id="wars-stats">
+      <span title="Beats — your currency">♪ <b id="ws-beats">0</b></span>
+      <span title="Your army / cap">⬤ <b id="ws-pop">0</b></span>
+      <span title="Selected units">▣ <b id="ws-sel">—</b></span>
+      <span class="enemy" title="THE STATIC army">☣ <b id="ws-enemy">0</b></span>
+    </div>
+    <div id="wars-toolbar"></div>
+    <div id="wars-result" class="hidden">
+      <h2 id="wr-title">VICTORY</h2>
+      <p id="wr-sub"></p>
+      <button id="wars-restart">NEW SKIRMISH</button>
+    </div>
   </div>
 
   <!-- ===== HELP ===== -->
