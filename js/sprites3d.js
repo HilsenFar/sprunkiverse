@@ -136,6 +136,9 @@ function buildGroup(url) {
       -s * (depth / 2));                // centre the extrusion depth
     return wrap;
   })();
+  // a failed load (e.g. a flaky connection) must not pin the rejection —
+  // drop it so the next request retries
+  promise.catch(() => groupCache.delete(url));
   groupCache.set(url, promise);
   return promise;
 }

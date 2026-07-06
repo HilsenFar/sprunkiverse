@@ -4,6 +4,14 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>JASON'S SPRUNKIVERSE — 3D</title>
+<meta name="theme-color" content="#0d1024" />
+<link rel="manifest" href="manifest.webmanifest" />
+<link rel="icon" type="image/png" href="assets/icons/icon-192.png" />
+<link rel="apple-touch-icon" href="assets/icons/icon-180.png" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="apple-mobile-web-app-title" content="Sprunkiverse" />
 <link rel="stylesheet" href="css/style.css" />
 <script type="importmap">
 {
@@ -165,5 +173,11 @@
 </div>
 
 <script type="module" src="js/main.js"></script>
+<script>
+  // no SW during local dev — it would serve stale modules to the reload flow
+  if ('serviceWorker' in navigator && !['localhost', '127.0.0.1'].includes(location.hostname)) {
+    addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+  }
+</script>
 </body>
 </html>

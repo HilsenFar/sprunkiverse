@@ -1,0 +1,16 @@
+{
+  "name": "Jason's Sprunkiverse",
+  "short_name": "Sprunkiverse",
+  "description": "A fan-made 3D Sprunki universe: music mixer with the original cast and horror mode, open world, god simulator and aquarium. Original Sprunki characters & sounds by NyankoBfLol (Scratch, CC BY-SA 2.0).",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#05060d",
+  "theme_color": "#0d1024",
+  "icons": [
+    { "src": "assets/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "assets/icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "assets/icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
